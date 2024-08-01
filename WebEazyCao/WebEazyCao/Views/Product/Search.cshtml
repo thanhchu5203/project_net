@@ -1,0 +1,46 @@
+﻿@model IPagedList<WebEazyCao.Models.Product>
+
+@{
+    ViewData["Title"] = "Search";
+}
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+
+<p>
+    @* <a asp-action="Create">Create New</a> *@
+</p>
+<ul class="breadcrumb">
+    <li><a href="@Url.Action("Index", "Home")">Trang chủ</a> <span class="divider">/</span></li>
+    <li><a href="@Url.Action("Index", "Home")">Sản phẩm</a></li>
+</ul>
+
+@{
+    var products = ViewBag.Products as IPagedList<WebEazyCao.Models.Product>;
+}
+
+@if (products != null && products.Any())
+{
+    <ul class="thumbnails">
+        @foreach (var item in products)
+        {
+            <li class="span3">
+                <div class="thumbnail">
+                    <a href="@Url.Action("ProductDetail", "Product", new { Id = item.Id })"><img src="@item.Image" alt="" /></a>
+                    <div class="caption">
+                        <h5>@item.Name</h5>
+                        <h4 style="text-align:center"><a class="btn" href="#">Add to <i class="icon-shopping-cart"></i></a> <a class="btn btn-primary" href="#">@item.Price VND</a></h4>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+
+    <div class="pagination">
+        @Html.PagedListPager(products, page => Url.Action("Search", "Product",
+                new { page = page, key = ViewBag.SearchKey }))
+    </div>
+}
+else
+{
+    <h2>Vui lòng nhập đúng thông tin sản phẩm.</h2>
+}

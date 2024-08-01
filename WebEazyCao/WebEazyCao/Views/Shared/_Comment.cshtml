@@ -1,0 +1,129 @@
+﻿@model List<WebEazyCao.ViewModels.FeedbackViewModel>
+
+@foreach (var itemfeedback in Model.Where(f => f.ReplyId == 0))
+{
+    <!-- COMMENT 1 - START -->
+    <div class="media">
+        <a class="pull-left" href="#"><img class="media-object" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt=""></a>
+        <div class="media-body">
+            <h4 class="media-heading">@itemfeedback.Name <small class="comment-time">@itemfeedback.ElapsedTime</small></h4>
+            <p>@itemfeedback.Description.</p>
+            <ul class="list-unstyled list-inline media-detail pull-left">
+                <li><i class="fa fa-calendar"></i>@itemfeedback.Date.ToString("dd/MM/yyyy HH:mm:ss")</li>
+                <li>
+                    <a href="#commentreply-@itemfeedback.Id" data-toggle="collapse" aria-expanded="false" aria-controls="collapse-1" class="reply-link" data-replyname="@itemfeedback.Name">
+                        Trả lời
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- COMMENT 1 - END -->
+    <!-- REPLY COMMENTS - START -->
+    <div style="margin-left: 50px;">
+        @foreach (var reply in Model.Where(r => r.ReplyId == itemfeedback.Id).OrderBy(r => r.Date))
+        {
+            <div class="media reply-comment">
+                <a class="pull-left" href="#"><img class="media-object reply-avatar" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt=""></a>
+                <div class="media-body reply-body">
+                    <h4 class="media-heading reply-heading">@reply.Name <small class="reply-time">@reply.ElapsedTime</small></h4>
+                    <p class="reply-description">@reply.Description.</p>
+                    <ul class="list-unstyled list-inline media-detail reply-detail pull-left">
+                        <li><i class="fa fa-calendar"></i>@reply.Date.ToString("dd/MM/yyyy HH:mm:ss")</li>
+                        <li>
+                            <a href="#commentreply-@itemfeedback.Id" data-toggle="collapse" aria-expanded="false" aria-controls="collapse-1" class="reply-link" data-replyname="@reply.Name">
+                                Trả lời
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+    <!-- REPLY COMMENTS - END -->
+    <!-- COMMENT REPLY - START -->
+    <div id="commentreply-@itemfeedback.Id" class="collapse comment-reply bg-light p-2" style="margin-left: 50px;">
+        <div class="">
+            <textarea class="form-control" id="txtCommentMsg_@itemfeedback.Id" placeholder="Your message" style="width: 90%; height: 93px; resize: none;">@itemfeedback.Name </textarea>
+            <a class="RepComent" data-productid="@itemfeedback.ProductId" data-userid="@ViewBag.UserID" data-replyid="@itemfeedback.Id" data-replyname="@itemfeedback.Name" data-commentmsg="txtCommentMsg_@itemfeedback.Id">
+                <input type="submit" class="btn btn-normal pull-left" value="Gửi Bình Luận">
+            </a>
+        </div>
+    </div>
+    <!-- COMMENT REPLY - END -->
+}
+
+<script>
+    // Get all reply links
+    var replyLinks = document.querySelectorAll('.reply-link');
+    // Add click event listener to each reply link
+    replyLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent default anchor behavior
+            // Get the reply name from the data attribute
+            var replyName = this.getAttribute('data-replyname');
+            // Get the corresponding textarea by ID
+            var textareaId = 'txtCommentMsg_' + this.getAttribute('href').split('-')[1];
+            var textarea = document.getElementById(textareaId);
+            // Update the textarea value
+            textarea.value = '@@' + replyName + ' ';
+        });
+    });
+</script>
+<style>
+    .comment-reply {
+        width: 100%; /* Đảm bảo khung reply chiếm toàn bộ chiều rộng */
+    }
+
+        .comment-reply .media-object {
+            width: 40px; /* Kích thước ảnh avatar */
+            height: 40px; /* Kích thước ảnh avatar */
+            margin-right: 10px; /* Khoảng cách bên phải của avatar */
+        }
+
+        .comment-reply .media-body {
+            margin-left: 50px; /* Khoảng cách giữa avatar và nội dung */
+        }
+
+        .comment-reply textarea.form-control {
+            margin-top: 10px;
+            width: 80%; /* Đảm bảo textarea chiếm toàn bộ chiều rộng */
+            height: 40px; /* Chiều cao của textarea */
+            resize: none; /* Vô hiệu hóa khả năng thay đổi kích thước */
+        }
+
+        .comment-reply .btn {
+            margin-top: 10px; /* Khoảng cách phía trên của nút submit */
+        }
+
+    .reply-comment {
+        font-size: 1em; /* Kích thước font nhỏ hơn */
+        padding: 5px; /* Giảm padding */
+        margin-bottom: 10px; /* Giảm khoảng cách giữa các comment */
+    }
+
+        .reply-comment .reply-avatar {
+            width: 60px; /* Kích thước ảnh avatar nhỏ hơn */
+            height: 60px; /* Kích thước ảnh avatar nhỏ hơn */
+        }
+
+        .reply-comment .reply-body {
+            margin-left: 40px; /* Khoảng cách giữa avatar và nội dung nhỏ hơn */
+        }
+
+        .reply-comment .reply-heading {
+            font-size: 1em; /* Kích thước font nhỏ hơn */
+        }
+
+        .reply-comment .reply-description {
+            font-size: 1em; /* Kích thước font nhỏ hơn */
+        }
+
+        .reply-comment .reply-detail {
+            font-size: 1em; /* Kích thước font nhỏ hơn */
+        }
+
+        .reply-comment .reply-time {
+            font-size: 1em; /* Kích thước font nhỏ hơn cho thời gian */
+        }
+</style>

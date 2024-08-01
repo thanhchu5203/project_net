@@ -1,0 +1,124 @@
+﻿@model IPagedList<WebEazyCao.Models.OrderReport>
+
+@{
+	ViewData["Title"] = "Danh sách báo cáo lỗi";
+	Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+	var users = ViewBag.Users as List<WebEazyCao.Models.User>;
+}
+
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+@section naviheader {
+	<!-- Left navbar links -->
+	<ul class="navbar-nav">
+		<li class="nav-item">
+			<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a href="/admin" class="nav-link">Trang chủ</a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a href="/Admin/OrderHistory" class="nav-link">Danh sách báo cáo</a>
+		</li>
+	</ul>
+}
+
+<section class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1>Quản lí đơn hàng</h1>
+			</div>
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+					<li class="breadcrumb-item active">Lỗi</li>
+				</ol>
+			</div>
+		</div>
+	</div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+	<div class="card">
+		<div class="card-header">
+			<h3 class="card-title">Danh sách báo cáo lỗi</h3>
+			<!-- Search Form -->
+			<form method="get" action="/Admin/OrderReport/SearchReport" class="form-inline float-right">
+				<div class="input-group">
+					<input type="text" name="key" class="form-control" placeholder="Tìm kiếm" value="@ViewBag.SearchKey">
+					<span class="input-group-btn">
+						<button type="submit" class="btn btn-primary">Tìm kiếm</button>
+					</span>
+				</div>
+			</form>
+		</div>
+
+		<div class="card-body">
+			@if (!Model.Any())
+			{
+				<p>Không có báo cáo lỗi nào.</p>
+			}
+			else
+			{
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Mã báo cáo</th>
+							<th>Ngày báo cáo</th>
+							<th>Người báo cáo</th>
+							<th>Đơn hàng</th>
+							<th>Vấn đề</th>
+							<th>Chi tiết</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var report in Model)
+						{
+							<tr>
+								<td>@report.Id</td>
+								<td>@report.ReportDate?.ToString("dd/MM/yyyy HH:mm:ss")</td>
+								<td>
+									@{
+										int reportedById;
+										bool isNumeric = int.TryParse(report.ReportedBy, out reportedById);
+										var user = users.FirstOrDefault(u => u.Id == reportedById);
+									}
+									@if (user != null)
+									{
+										@user.Name
+									}
+									else
+									{
+										@report.ReportedBy
+									}
+								</td>
+								<td>@report.OrderHistory?.Id</td>
+								<td>@report.Issue</td>
+								<td>
+									<a class="btn btn-info" href="@Url.Action("Details", "OrderReport", new { id = report.Id })">Xem chi tiết</a>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+
+				<div class="pagination">
+					@Html.PagedListPager(Model, page => Url.Action("Index","OrderReport", new { page, key = ViewBag.SearchKey }), new PagedListRenderOptions
+{
+	LiElementClasses = new[] { "page-item" },
+	PageClasses = new[] { "page-link" },
+	ActiveLiElementClass = "active"
+})
+				</div>
+			}
+
+		</div>
+	</div>
+	<!-- /.card-body -->
+	<div class="card-footer">
+	</div>
+</section>

@@ -1,0 +1,85 @@
+﻿@model WebEazyCao.Models.Voucher
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section naviheader {
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/catogory" class="nav-link">Danh mục</a>
+        </li>
+    </ul>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Quản lí mã giảm giá</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Advanced Form</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="card">
+        @using (Html.BeginForm("Edit", "Voucher", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="modal-body">
+                <h4 class="control-group">Sửa mã giảm giá</h4>
+                <div class="control-group">
+                    <label class="control-label" for="Name">Tên mã giảm giá</label>
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="Discount">Giảm giá</label>
+                    @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="Type">Loại</label>
+                    @Html.DropDownListFor(model => model.Type, (SelectList)ViewBag.VoucherTypes, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="RemainUsed">Số lần dùng</label>
+                    @Html.EditorFor(model => model.RemainUsed, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.RemainUsed, "", new { @class = "text-danger" })
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="IsActive">Hoạt động</label>
+                    <input type="checkbox" id="IsActive" name="IsActive" value="true" @(Model.IsActive == true ? "checked" : "") />
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        }
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+    </div>
+
+    <!-- /.card -->
+</section>
+<!-- /.content -->
+

@@ -1,0 +1,169 @@
+﻿@model IEnumerable<WebEazyCao.Models.User>
+
+@{
+    ViewData["Title"] = "User Search";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section naviheader {
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/user" class="nav-link">User</a>
+        </li>
+    </ul>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Quản lí người dùng</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Người dùng</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Danh sách người dùng</h3>
+            <div class="card-tools d-flex justify-content-end">
+                <form method="get" action="/Admin/User/Search" class="form-inline mr-2">
+                    <div class="input-group">
+                        <input type="text" name="key" class="form-control" placeholder="Tìm kiếm" value="@ViewBag.SearchKey">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                        </span>
+                    </div>
+                </form>
+                <a href="/admin/user/add" class="btn btn-primary">Thêm mới</a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên truy cập</th>
+                        <th>Họ tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                        <th>Địa chỉ</th>
+                        <th>Trạng thái</th>
+                        <th>Số dư</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = (ViewBag.PageNumber - 1) * ViewBag.PageSize + 1;
+                        foreach (var item in Model)
+                        {
+                            <tr id="trow_@item.Id">
+                                <td>@i</td>
+                                <td>@item.UserName</td>
+                                <td>@item.Name</td>
+                                <td>@item.Phone</td>
+                                <td>@item.Email</td>
+                                <td>@item.Address</td>
+                                <td>
+                                    @if (item.IsActive == true)
+                                    {
+                                        @Html.Raw("Hoạt động")
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw("Ngừng hoạt động")
+                                    }
+                                </td>
+                                <td>
+                                    @(item.Money?.ToString("N0")),000 VNĐ
+                                </td>
+
+                                <td>
+                                    <a href="Edit/@item.Id" class="btn btn-sm btn-primary">Sửa</a>
+                                    <a href="#" data-id="@item.Id" class="btn btn-sm btn-danger btnDelete">Xóa</a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-6">
+                    @* Custom Pagination *@
+                    <ul class="pagination">
+                        @if (ViewBag.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Search", "User", new { key = ViewBag.SearchKey, page = ViewBag.PageNumber - 1, pageSize = ViewBag.PageSize })">Previous</a>
+                            </li>
+                        }
+                        @for (var i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == ViewBag.PageNumber ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Search", "User", new { key = ViewBag.SearchKey, page = i, pageSize = ViewBag.PageSize })">@i</a>
+                            </li>
+                        }
+                        @if (ViewBag.PageNumber < ViewBag.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Search", "User", new { key = ViewBag.SearchKey, page = ViewBag.PageNumber + 1, pageSize = ViewBag.PageSize })">Next</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-6">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".btnDelete").click(function (e) {
+            e.preventDefault();
+            var id = $(this).data("id");
+
+            if (confirm("Bạn có chắc chắn muốn xóa người dùng này không?")) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Delete", "User")',
+                    data: { id: id },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            $("#trow_" + id).remove();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+
+

@@ -1,0 +1,20 @@
+﻿﻿@using WebEazyCao.DAO;
+@{
+    var quantity = ViewContext.HttpContext.Session.GetInt32("quantity") ?? 0;
+}
+<style>
+    .span3 {
+    }
+</style>
+
+<!-- Sidebar ================================================== -->
+<div id="sidebar" class="span3">
+    <div class="well well-small">
+        <a id="myCart" href="~/Cart/Index">
+            <img src="~/themes/images/ico-cart.png" alt="cart">
+            <span id="cart-quantity">@quantity</span> Sản phẩm trong giỏ hàng
+        </a>
+    </div><ul id="sideManu" class="nav nav-tabs nav-stacked">
+    @await Component.InvokeAsync("Category")
+</div>
+<!-- Sidebar end=============================================== -->

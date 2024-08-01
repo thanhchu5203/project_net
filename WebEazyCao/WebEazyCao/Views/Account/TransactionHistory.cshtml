@@ -1,0 +1,49 @@
+﻿@model IEnumerable<WebEazyCao.Models.OrderHistory>
+
+<h2>Lịch sử giao dịch</h2>
+
+@{
+    var successMessage = TempData["SuccessMessage"] as string;
+}
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">
+        @successMessage
+    </div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <p>Bạn chưa có giao dịch nào.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id giao dịch</th>
+                <th>Tên sản phẩm</th>
+                <th>Ngày giao dịch</th>
+                <th>Tổng số tiền</th>
+                <th>Chi tiết</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.ProductName</td>
+                    <td>@order.Date?.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    <td>@order.TotalPrice.ToString("0.000")VNĐ</td>
+                    <td>
+                        <a class="btn btn-info" href="@Url.Action("OrderDetails", "Account", new { id = order.Id })">
+                            Xem chi tiết
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

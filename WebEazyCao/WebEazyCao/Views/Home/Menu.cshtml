@@ -1,0 +1,10 @@
+﻿@model IEnumerable<WebEazyCao.Models.Menu>
+
+
+<ul id="topMenu" class="nav pull-right">
+    @foreach (var item in (List<WebEazyCao.Models.Menu>)ViewBag.Menu)
+    {
+        <li><a href="@item.Links">@item.Title</a></li>
+    }
+</ul>
+

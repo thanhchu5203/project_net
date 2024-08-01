@@ -1,0 +1,170 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<WebEazyCao.Models.Adv>
+@{
+    ViewData["Title"] = "Adv";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section naviheader {
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a class="nav-link" data-widget="pushmenu" href="~/clients/index3.html">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a class="nav-link" href="/Admin/Adv">Adv</a>
+        </li>
+    </ul>
+}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>List Adv</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Adv</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Title</h3>
+
+            <div class="card-tools">
+                <a href="/admin/adv/add" class="btn btn-primary">Thêm</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Title</th>
+                        <th>Image</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr id="trow_@item.Id">
+                                <!-- Thêm id vào đây -->
+                                <td>@i</td>
+                                <td>@item.Title</td>
+                                <td><img src="@item.Image" alt="@item.Title" style="width: 100px; height: auto;"></td>
+                                <td><a href="@item.Link">@item.Title</a></td>
+                                <td>
+                                    <a href="/Admin/Adv/Edit/@item.Id" class="btn btn-sm btn-primary">Sửa</a>
+                                    <a href="#" data-id="@item.Id" class="btn btn-sm btn-danger btnDelete">Xóa</a>
+                                </td>
+                                <td></td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">Empty</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+            Footer
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".btnDelete").on('click', function (e) {
+            e.preventDefault();
+            var id = $(this).data("id");
+
+            if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
+                $.ajax({
+                    type: "POST",
+                    url: '/Admin/Adv/Delete',
+                    data: { id: id },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            $("#trow_" + id).remove();
+                            updateSTT(); // Gọi hàm updateSTT tại đây
+                        } else {
+                            alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+        function updateSTT() {
+            $("table tbody tr").each(function (index) {
+                $(this).find("td:first").text(index + 1);
+            });
+        }
+        // Chọn tất cả các checkbox
+        $('#selectAll').click(function () {
+            $('.selectItem').prop('checked', this.checked);
+        });
+
+        // Xử lý nút xóa
+        $('#BtnDeleteAll').click(function (e) {
+            e.preventDefault();
+            var selectedIds = [];
+            $('.selectItem:checked').each(function () {
+                selectedIds.push($(this).val());
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Bạn có chắc chắn muốn xóa các mục đã chọn không?')) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteAllSelect", "Brand")',
+                        type: 'POST',
+                        data: { ids: selectedIds },
+                        traditional: true,
+                        success: function (response) {
+                            alert(response.message); // Hiển thị thông báo từ server
+                            if (response.success) {
+                                location.reload(); // Tải lại trang sau khi xóa thành công
+                            }
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra khi xóa các mục đã chọn.');
+                        }
+                    });
+                }
+            } else {
+                alert('Vui lòng chọn ít nhất một mục để xóa.');
+            }
+        });
+    });
+
+</script>

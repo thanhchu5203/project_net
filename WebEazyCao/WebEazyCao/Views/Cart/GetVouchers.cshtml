@@ -1,0 +1,31 @@
+﻿@model List<WebEazyCao.Models.Voucher>
+
+@{
+    ViewData["Title"] = "Danh sách Voucher";
+}
+
+<h2>Danh sách Voucher</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Giảm giá</th>
+            <th>Phương thức giảm giá</th>
+            <th>Số lượng còn lại</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var voucher in Model)
+        {
+            <tr>
+                <td>@voucher.Name</td>
+                <td>@voucher.Discount</td>
+                <td>@(voucher.Type == 1 ? "%" : "VNĐ")</td>
+                <td>@voucher.RemainUsed</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Index", "Cart")" class="btn btn-primary">Quay lại giỏ hàng</a>

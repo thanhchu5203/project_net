@@ -1,0 +1,169 @@
+﻿@model WebEazyCao.ViewModels.PagedProductViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<style>
+    .thumbnail img {
+        height: 200px; /* Fixed height for images */
+        width: 100%; /* Full width of the container */
+        object-fit: cover; /* Ensure image does not distort */
+    }
+    /* Pagination styles */
+    .pagination {
+        list-style-type: none; /* Removes default list item markers */
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        padding-left: 0; /* Removes default padding */
+    }
+
+        .pagination .page-item {
+            margin: 0 5px;
+        }
+
+        .pagination .page-link {
+            color: #007bff;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+            .pagination .page-link:hover {
+                background-color: #f8f9fa;
+                border-color: #007bff;
+            }
+
+        .pagination .page-item.active .page-link {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+</style>
+
+<div id="mainBody">
+    <div class="container">
+        <div class="row">
+            <div class="span9">
+                <div class="well well-small">
+                    <h4>Sản Phẩm Mới Nhất <small class="pull-right">Một số sản phẩm bạn có thể quan tâm</small></h4>
+                    <div class="row-fluid">
+                        <div id="featured" class="carousel slide">
+                            <div class="carousel-inner">
+                                @if (Model.Products != null && Model.Products.Any())
+                                {
+                                    int index = 0;
+                                    while (index < Model.Products.Count())
+                                    {
+                                        <div class="item @(index == 0 ? "active" : "")">
+                                            <ul class="thumbnails">
+                                                @for (int i = 0; i < 4 && index < Model.Products.Count(); i++, index++)
+                                                {
+                                                    var item = Model.Products[index];
+                                                    <li class="span3">
+                                                        <div class="thumbnail">
+                                                            <i class="tag"></i>
+                                                            <a href="@Url.Action("ProductDetail","Product",new{ Id = item.Id })">
+                                                                <img src="@item.Image" alt="" ></a>
+                                                            <div class="caption">
+                                                                <h5>@item.Name</h5>
+                                                                <h4><a class="btn" href="@Url.Action("ProductDetail","Product",new{ Id = item.Id })">VIEW</a> <span class="pull-right">@item.Price.ToString("0.000") VND</span></h4>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <a class="left carousel-control" href="#featured" data-slide="prev">‹</a>
+                            <a class="right carousel-control" href="#featured" data-slide="next">›</a>
+                        </div>
+                    </div>
+                </div>
+                <h4>Sản phẩm</h4>
+                <ul class="thumbnails">
+                    @foreach (var item in Model.Products)
+                    {
+                        <li class="span3">
+                            <div class="thumbnail">
+                                <a href="@Url.Action("ProductDetail","Product",new{ Id = item.Id })"><img src="@item.Image" alt="" /></a>
+                                <div class="caption">
+                                    <h5>@item.Name</h5>
+                                    <h4 style="text-align:center">
+                                        <button class="btn add-to-cart" data-id="@item.Id">Mua<i class="icon-shopping-cart"></i></button>
+                                        <a class="btn btn-primary">@item.Price.ToString("0.000") VND</a>
+                                    </h4>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1, pageSize = Model.PageSize })">«</a>
+                            </li>
+                        }
+                        @for (int i = Math.Max(1, Model.PageNumber - 1); i <= Math.Min(Model.TotalPages, Model.PageNumber + 1); i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { page = i, pageSize = Model.PageSize })">@i</a>
+                            </li>
+                        }
+                        @if (Model.PageNumber < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1, pageSize = Model.PageSize })">»</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.add-to-cart').click(function () {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("Buy", "Cart")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (response) {
+                        if (response.success) {
+                            alert("Sản phẩm đã được thêm vào giỏ hàng!");
+                            $('#cart-quantity').text(response.quantity);
+                        } else {
+                            if (response.redirectUrl) {
+                                var confirmRedirect = confirm(response.message + "\n\nBạn có muốn đi tới trang nạp tiền không?");
+                                if (confirmRedirect) {
+                                    window.location.href = response.redirectUrl;
+                                }
+                            } else if (response.loginRequired) {
+                                alert(response.message);
+                                window.location.href = 'https://localhost:7032/Home/Login';
+                            } else {
+                                alert(response.message);
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra, vui lòng thử lại.");
+                    }
+                });
+            });
+        });
+    </script>
+    }

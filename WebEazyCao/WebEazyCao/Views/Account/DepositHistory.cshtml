@@ -1,0 +1,38 @@
+﻿@model IEnumerable<WebEazyCao.Models.DepositHistory>
+
+<h2>Lịch sử nạp tiền</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <p>Bạn chưa nạp tiền lần nào.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID giao dịch</th>
+                <th>Ngày giao dịch</th>
+                <th>Tổng số tiền</th>
+                <th>Nội dung</th>
+                <th>Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.CreatedAt</td>
+                    <td>@item.Money.ToString("0.000")VNĐ</td>
+                    <td>@item.Description</td>
+                    @if(@item.IsSuccess == false){
+                    <td>Giao dịch thất bại</td>
+                    }else{
+                    <td>Giao dịch thành công</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}

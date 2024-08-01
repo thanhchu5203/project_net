@@ -1,0 +1,161 @@
+﻿@model IEnumerable<WebEazyCao.Models.Brand>
+@{
+    ViewData["Title"] = "Brand";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section naviheader {
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/catogory" class="nav-link">Danh mục</a>
+        </li>
+    </ul>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Quản lí thương hiệu</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Advanced Form</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Danh sách thương hiệu</h3>
+            <div class="card-tools">
+                <a href="/admin/brand/add" class="btn btn-primary">Thêm mới</a>
+                <a href="#" class="btn btn-danger" id="BtnDeleteAll">Xóa</a>
+            </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAll"></th>
+                        <th>STT</th>
+                        <th>Thương hiệu</th>
+                        <th>Danh mục</th>
+                        <th class="text-center"></th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr id="trow_@item.Id">
+                                <td><input type="checkbox" class="selectItem" value="@item.Id" /></td>
+                                <td>@i</td>
+                                <td>@item.Name</td>
+                                <td>@(item.Category?.Name ?? "Không có danh mục")</td>
+                                <td class="text-center"></td>
+                                <td>
+                                    <a href="brand/edit/@item.Id" class="btn btn-sm btn-primary">Sửa</a>
+                                    <a href="#" data-id="@item.Id" class="btn btn-sm btn-danger btnDelete">Xóa</a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <div class="col-6" style="text-align:right"></div>
+            <div class="col-6">
+            </div>
+        </div>
+    </div>
+    <!-- /.card-body -->
+    <div class="card-footer">
+    </div>
+</section>
+<!-- /.content -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".btnDelete").click(function (e) {
+            e.preventDefault();
+            var id = $(this).data("id");
+
+            if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Delete", "Brand")',
+                    data: { id: id },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            $("#trow_" + id).remove();
+                            if (response.success) {
+                                location.reload(); // Tải lại trang sau khi xóa thành công
+                            }
+                        } else {
+                            alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
+                        }
+                    }
+                });
+            }
+        });
+        // Chọn tất cả các checkbox
+        $('#selectAll').click(function () {
+            $('.selectItem').prop('checked', this.checked);
+        });
+
+        // Xử lý nút xóa
+        $('#BtnDeleteAll').click(function (e) {
+            e.preventDefault();
+            var selectedIds = [];
+            $('.selectItem:checked').each(function () {
+                selectedIds.push($(this).val());
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Bạn có chắc chắn muốn xóa các mục đã chọn không?')) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteAllSelect", "Brand")',
+                        type: 'POST',
+                        data: { ids: selectedIds },
+                        traditional: true,
+                        success: function (response) {
+                            alert(response.message); // Hiển thị thông báo từ server
+                            if (response.success) {
+                                location.reload(); // Tải lại trang sau khi xóa thành công
+                            }
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra khi xóa các mục đã chọn.');
+                        }
+                    });
+                }
+            } else {
+                alert('Vui lòng chọn ít nhất một mục để xóa.');
+            }
+        });
+    });
+
+</script>

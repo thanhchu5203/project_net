@@ -1,0 +1,112 @@
+﻿@model WebEazyCao.ViewModels.LoginViewModel
+@using WebEazyCao.Models
+@using WebEazyCao
+@using DNTCaptcha.Core
+@{
+	ViewData["Title"] = "Login Page";
+}
+<style>
+	.btn-login {
+		width: 26%;
+		padding: 4px 12px;
+		margin: 0px 0px 0px 90px;
+		font-size: 16px;
+		text-align: center;
+	}
+
+	.control-group {
+		padding: 0px 90px;
+	}
+
+	.captcha-refresh {
+		cursor: pointer;
+	}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+<script>
+	$(document).ready(function () {
+		$('.captcha-refresh').on('click', function () {
+			$.get('@Url.Action("RefreshCaptcha", "Home")', function (data) {
+				$('#captchaImage').attr('src', data.captchaImageUrl);
+				$('#captchaHiddenInput').val(data.captchaHiddenInput);
+			});
+		});
+	});
+</script>
+
+
+@* 
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+	<path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
+	<path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
+</svg> *@
+
+<div id="mainBody">
+	<div class="container">
+		<div class="row">
+			<div class="span9">
+				<table class="table table-bordered">
+					<tr><th> TÔI ĐÃ ĐĂNG KÝ RỒI!  </th></tr>
+
+					<form method="post" asp-controller="Home" asp-action="Login">
+					<tr>
+						<td>
+							<form class="form-horizontal">
+									@ViewBag.LoginFail
+								<div class="control-group">
+									<label class="control-label " for="inputUsername">Tên tài khoản</label>
+									<input asp-for="Username" class="form-control" />
+									<span asp-validation-for="Username" class="text-danger"></span>
+								</div>
+
+
+								<div class="control-group">
+									<label class="control-label" for="Password">Mật khẩu <sup>*</sup></label>
+									<input type="password" asp-for="Password" class="form-control"/>
+									<span asp-validation-for="Password" class="text-danger"></span>
+								</div>
+
+								<div class="control-group">
+									<label class="control-label" for="inputCaptcha">Captcha</label>
+									<dnt-captcha asp-captcha-generator-max="999999"
+												 asp-captcha-generator-min="111111"
+												 asp-captcha-generator-language="English"
+												 asp-captcha-generator-display-mode="ShowDigits"
+												 asp-use-relative-urls="true"
+												 asp-placeholder="Security code as a number"
+												 asp-validation-error-message="Please enter the security code as a number."
+												 asp-too-many-requests-error-message="Too many requests! Please wait a minute!"
+												 asp-font-name="Tahoma"
+												 asp-font-size="20"
+												 asp-fore-color="#333333"
+												 asp-back-color="#ccc"
+												 asp-text-box-class="text-box single-line form-control col-md-4"
+												 asp-text-box-template="<div class='input-group col-md-4'><span class='input-group-addon'><span class='glyphicon glyphicon-lock'></span></span>{0}</div>"
+												 asp-validation-message-class="text-danger"
+												 asp-refresh-button-class="glyphicon glyphicon-refresh btn-sm"
+												 asp-show-refresh-button="true" />
+
+								</div>
+
+								<div class="control-group">
+									<div class="controls">
+										<button type="submit" class="btn">Đăng nhập</button> OR <a href="/Home/Register" class="btn">Đăng ký ngay!</a>
+									</div>
+								</div>
+								<div class="control-group">
+									<div class="controls">
+										<a href="/Home/ForgotPassword" style="text-decoration:underline">Quên mật khẩu ?</a>
+									</div>
+								</div>
+							</form>
+						</td>
+					</tr>
+
+					</form>
+				</table>
+
+			</div>
+		</div>
+	</div>
+</div>

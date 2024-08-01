@@ -1,0 +1,469 @@
+﻿@{
+    ViewData["Title"] = "Product Detail";
+}
+
+
+﻿@using WebEazyCao.ViewModels
+@model WebEazyCao.ViewModels.ProductDetailViewModel
+@{
+    ViewData["Title"] = "Product Detail";
+    var listfeedback = (List<FeedbackViewModel>)ViewBag.ListFeedback;
+}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail</title>
+    <!-- Bootstrap CSS -->
+    <!-- Font Awesome CSS -->
+    <!-- Font Awesome CSS -->
+</head>
+
+<div id="mainBody">
+    <div class="container">
+        <div class="row">
+            <div class="span9">
+
+                <ul class="breadcrumb">
+                    <li><a href="@Url.Action("Index","Home")">Trang chủ</a> <span class="divider">/</span></li>
+                    <li><a href="products.html">Sản phẩm</a> <span class="divider">/</span></li>
+                    <li class="active">Chi tiết sản phẩm</li>
+                </ul>
+                <div class="row">
+                    <div id="gallery" class="span3">
+                        <a href="@Model.Product.Image" title="@Model.Product.Name">
+                            <img src="@Model.Product.Image" style="width:100%" alt="@Model.Product.Name">
+                        </a>
+                        <div id="differentview" class="moreOptopm carousel slide">
+                            <div class="carousel-inner">
+                                <div class="item active">
+                                    <a href="themes/images/products/large/f1.jpg"> <img style="width:29%" src="themes/images/products/large/f1.jpg" alt=""></a>
+                                    <a href="themes/images/products/large/f2.jpg"> <img style="width:29%" src="themes/images/products/large/f2.jpg" alt=""></a>
+                                    <a href="themes/images/products/large/f3.jpg"> <img style="width:29%" src="themes/images/products/large/f3.jpg" alt=""></a>
+                                </div>
+                                <div class="item">
+                                    <a href="themes/images/products/large/f3.jpg"> <img style="width:29%" src="themes/images/products/large/f3.jpg" alt=""></a>
+                                    <a href="themes/images/products/large/f1.jpg"> <img style="width:29%" src="themes/images/products/large/f1.jpg" alt=""></a>
+                                    <a href="themes/images/products/large/f2.jpg"> <img style="width:29%" src="themes/images/products/large/f2.jpg" alt=""></a>
+                                </div>
+                            </div>
+                            <!--
+                            <a class="left carousel-control" href="#myCarousel" data-slide="prev">‹</a>
+                            <a class="right carousel-control" href="#myCarousel" data-slide="next">›</a>
+                            -->
+                        </div>
+                    </div>
+                    <div class="span6">
+                        <h3>@Model.Product.Name  </h3>
+                        <hr class="soft">
+                        <form class="form-horizontal qtyFrm" id="product-form">
+                            <div class="control-group">
+                                <label class="control-label"><span>Giá: @Model.Product.Price.ToString("0.000") VND</span></label>
+                                <div class="controls">
+                                    <input type="number" class="span1" placeholder="SLg." id="quantity-input" value="1">
+                                    <button type="button" class="btn btn-large btn-primary pull-right add-to-cart" data-id="@Model.Product.Id"> Thêm vào <i class=" icon-shopping-cart"></i></button>
+                                </div>
+                            </div>
+                        </form>
+
+
+                        <hr class="soft">
+                        <label class="control-label"><span>Số Lượng Còn Lại: @Model.Product.Quantity</span></label>
+                        <hr class="soft clr">
+                        <label class="control-label"><span>@Model.Product.Description</span></label>
+
+                        <a class="btn btn-small pull-right" href="#detail">Chi tiết</a>
+                        <br class="clr">
+                        <a href="#" name="detail"></a>
+                        <hr class="soft">
+                    </div>
+
+                    <div class="span9">
+                        <ul id="productDetail" class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab">Chi Tiết Sản Phẩm</a></li>
+                            <li class=""><a href="#profile" data-toggle="tab">Sản Phẩm Liên Quan</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane fade active in" id="home">
+                                <h4>Thông tin sản phẩm</h4>
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr class="techSpecRow"><th colspan="2">Chi Tiết Sản Phẩms</th></tr>
+                                        <tr class="techSpecRow"><td class="techSpecTD1">Tên Sản Phẩm: </td><td class="techSpecTD2">@Model.Product.Name</td></tr>
+                                        <tr class="techSpecRow"><td class="techSpecTD1">Thể Loại:</td><td class="techSpecTD2">@Model.Product.Category.Name</td></tr>
+                                        <tr class="techSpecRow"><td class="techSpecTD1">Hãng:</td><td class="techSpecTD2"> @Model.Product.Brand.Name</td></tr>
+                                        <tr class="techSpecRow"><td class="techSpecTD1">Mô Tả:</td><td class="techSpecTD2">@Model.Product.Description</td></tr>
+                                        <tr class="techSpecRow"><td class="techSpecTD1">Số Lượng Hiện Có:</td><td class="techSpecTD2">@Model.Product.Quantity</td></tr>
+                                    </tbody>
+                                </table>
+                                <!-- Comments Section Start -->
+
+                                <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+                                <section class="content-item" id="comments">
+                                    <form>
+                                        <h3 class="pull-left">Bình luận mới</h3>
+
+                                        <fieldset>
+                                            <div class="media">
+                                                <div class="pull-left">
+                                                    <img class="media-object" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+                                                </div>
+                                                <div class="media-body">
+                                                    <textarea class="form-control" id="txtCommentNew" placeholder="Bình luận của bạn" style="width: 674px; height: 93px; resize: none;"></textarea>
+                                                    <button type="button" id="btnCommentNew" data-productid="@Model.Product.Id" data-userid="@ViewBag.UserID" class="btn btn-normal pull-left">Bình Luận</button>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                    <div id="div_allcomment">
+                                        <h3>@listfeedback.Count() Comments</h3>
+                                        @await Html.PartialAsync("_Comment", listfeedback)
+                                    </div>
+                                </section>
+                                <!-- Comments Section End -->
+
+                            </div>
+                            <div class="tab-pane fade" id="profile">
+                                <div id="myTab" class="pull-right">
+                                    <a href="#listView" data-toggle="tab"><span class="btn btn-large"><i class="icon-list"></i></span></a>
+                                    <a href="#blockView" data-toggle="tab"><span class="btn btn-large btn-primary"><i class="icon-th-large"></i></span></a>
+                                </div>
+                                <br class="clr">
+                                <hr class="soft">
+                                <div class="tab-content">
+                                    <div class="tab-pane" id="listView">
+                                        @foreach (var item in Model.RelatedProducts)
+                                        {
+                                            <div class="row">
+                                                <div class="span2">
+                                                    <a href="@Url.Action("ProductDetail","Product",new{ Id = item.Id })"><img src="@item.Image" alt="@item.Name"></a>
+                                                </div>
+                                                <div class="span4">
+                                                    <h3>@item.Name</h3>
+                                                    <hr class="soft">
+                                                    <h5>@item.Description</h5>
+                                                    <p>@item.Description</p>
+                                                    <a class="btn btn-small pull-right" href="@Url.Action("ProductDetail","Product",new{ Id = item.Id })">Xem Sản Phẩm</a>
+                                                    <br class="clr">
+                                                </div>
+                                                <div class="span3 alignR">
+                                                    <form class="form-horizontal qtyFrm">
+                                                        <h3>@item.Price VND</h3>
+                                                        <div class="btn-group">
+                                                            <a href="product_details.html?Id=@item.Id" class="btn btn-large btn-primary"> Thêm vào <i class="icon-shopping-cart"></i></a>
+
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <hr class="soft">
+                                        }
+                                    </div>
+                                    <div class="tab-pane active" id="blockView">
+                                        <ul class="thumbnails">
+                                            @foreach (var item in Model.RelatedProducts)
+                                            {
+                                                <li class="span3">
+                                                    <div class="thumbnail">
+                                                        <a href="@Url.Action("ProductDetail","Product",new{ Id = item.Id })"><img src="@item.Image" alt="@item.Name"></a>
+                                                        <div class="caption">
+                                                            <h5>@item.Name</h5>
+                                                            <p>@item.Description</p>
+                                                            <h4 style="text-align:center">
+                                                                <a class="btn" href="#">Add to <i class="icon-shopping-cart"></i></a>
+                                                                <a class="btn btn-primary" href="@Url.Action("ProductDetail","Product",new{ Id = item.Id })">@item.Price VND</a>
+                                                            </h4>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                        <hr class="soft">
+                                    </div>
+                                </div>
+                                <br class="clr">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.add-to-cart').click(function () {
+                var id = $(this).data('id');
+                var quantity = parseInt($('#quantity-input').val()) || 1; // Lấy số lượng từ input, mặc định là 1 nếu không hợp lệ
+
+                if (quantity < 1) {
+                    alert("Số lượng phải lớn hơn 0.");
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("Buy", "Cart")',
+                    type: 'POST',
+                    data: { id: id, quantity: quantity },
+                    success: function (response) {
+                        if (response.success) {
+                            // Cập nhật giao diện hoặc hiển thị thông báo thành công
+                            alert("Sản phẩm đã được thêm vào giỏ hàng!");
+                            $('#cart-quantity').text(response.quantity);
+                        } else {
+                            if (response.redirectUrl) {
+                                var confirmRedirect = confirm(response.message + "\n\nBạn có muốn đi tới trang nạp tiền không?");
+                                if (confirmRedirect) {
+                                    window.location.href = response.redirectUrl;
+                                }
+                            } else if (response.loginRequired) {
+                                alert(response.message);
+                                window.location.href = 'https://localhost:7032/Home/Login';
+                            } else {
+                                alert(response.message);
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra, vui lòng thử lại.");
+                    }
+                });
+            });
+        });
+    </script>
+
+}
+<!-- MainBody End ============================= -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Bootstrap JavaScript -->
+<!-- Bootbox.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>
+<script>
+    var product = {
+        init: function () {
+            this.registerEvents();
+        },
+        registerEvents: function () {
+            var self = this;
+
+            $('#btnCommentNew').off('click').on('click', function (e) {
+                e.preventDefault();
+                self.handleComment($(this), 0);
+            });
+
+            $(document).off('click', '.RepComent').on('click', '.RepComent', function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                var replyid = btn.data('replyid');
+                self.handleComment(btn, replyid);
+            });
+        },
+        handleComment: function (btn, replyid) {
+            var productid = btn.data('productid');
+            var userid = btn.data('userid'); // Đảm bảo userid được truyền đúng từ phía máy khách
+            var description = replyid === 0 ? $('#txtCommentNew').val().trim() : $('#' + btn.data('commentmsg')).val().trim();
+
+            if (description === "") {
+                this.showAlert("Chưa nhập bình luận");
+                return;
+            }
+
+            $.ajax({
+                url: "/Product/AddNewComment",
+                data: {
+                    userid: userid,
+                    productid: productid,
+                    replyid: replyid,
+                    feedback: description
+                },
+                dataType: "json",
+                type: "POST",
+                success: function (response) {
+                    if (response.status === true) {
+                        // Nếu thành công, không cần hiển thị thông báo, chỉ tải lại danh sách bình luận
+                        $('#txtCommentNew').val('');
+                        $("#div_allcomment").load("/Product/GetFeedback?productid=" + productid, function (response, status, xhr) {
+                            if (status === "error") {
+                                product.showAlert("Có lỗi xảy ra khi tải lại bình luận: " + xhr.status + " " + xhr.statusText);
+                            } else {
+                                // Cập nhật lại data-userid cho các nút bình luận và trả lời
+                                $('#btnCommentNew').data('userid', userid);
+                                $('.RepComent').each(function () {
+                                    $(this).data('userid', userid);
+                                });
+                                self.registerEvents(); // Đăng ký lại sự kiện sau khi tải lại bình luận
+                            }
+                        });
+                    } else {
+                        product.showAlert("Thêm bình luận thất bại. Vui lòng đăng nhập", function () {
+                            window.location.href = "/Home/Login";
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    product.showAlert("Có lỗi xảy ra: " + error);
+                    console.log("Err" + xhr + error);
+                }
+            });
+        },
+        showAlert: function (message, callback) {
+            $.when(
+                $.getScript("https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"),
+                $.getScript("https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js")
+            ).done(function () {
+                bootbox.alert({
+                    message: message,
+                    size: 'medium',
+                    closeButton: false,
+                    callback: callback
+                });
+            }).fail(function () {
+                console.error("Không tải được Bootstrap hoặc Bootbox");
+            });
+        }
+    };
+
+    product.init();
+
+</script>
+<style>
+    body {
+        margin-top: 20px;
+    }
+
+    .content-item {
+        padding: 30px 0;
+        background-color: #FFFFFF;
+    }
+
+        .content-item.grey {
+            background-color: #F0F0F0;
+            padding: 50px 0;
+            height: 100%;
+        }
+
+        .content-item h2 {
+            font-weight: 700;
+            font-size: 35px;
+            line-height: 45px;
+            text-transform: uppercase;
+            margin: 20px 0;
+        }
+
+        .content-item h3 {
+            font-weight: 400;
+            font-size: 20px;
+            color: #555555;
+            margin: 10px 0 15px;
+            padding: 0;
+        }
+
+    .content-headline {
+        height: 1px;
+        text-align: center;
+        margin: 20px 0 70px;
+    }
+
+        .content-headline h2 {
+            background-color: #FFFFFF;
+            display: inline-block;
+            margin: -20px auto 0;
+            padding: 0 20px;
+        }
+
+    .grey .content-headline h2 {
+        background-color: #F0F0F0;
+    }
+
+    .content-headline h3 {
+        font-size: 14px;
+        color: #AAAAAA;
+        display: block;
+    }
+
+    #comments {
+        box-shadow: 0 -1px 6px 1px rgba(0,0,0,0.1);
+        background-color: #FFFFFF;
+        padding: 20px; /* Added padding to comments section */
+    }
+
+        #comments form {
+            margin-bottom: 30px;
+        }
+
+        #comments .btn {
+            margin-top: 7px;
+        }
+
+        #comments form fieldset {
+            clear: both;
+        }
+
+        #comments form textarea {
+            height: 100px;
+        }
+
+        #comments .media {
+            border-top: 1px dashed #DDDDDD;
+            padding: 20px 0;
+            margin: 0;
+        }
+
+            #comments .media > .pull-left {
+                margin-right: 20px;
+            }
+
+            #comments .media img {
+                max-width: 100px;
+            }
+
+            #comments .media h4 {
+                margin: 0 0 10px;
+            }
+
+                #comments .media h4 span {
+                    font-size: 14px;
+                    float: right;
+                    color: #999999;
+                }
+
+            #comments .media p {
+                margin-bottom: 15px;
+                text-align: justify;
+            }
+
+        #comments .media-detail {
+            margin: 0;
+        }
+
+            #comments .media-detail li {
+                color: #AAAAAA;
+                font-size: 12px;
+                padding-right: 10px;
+                font-weight: 600;
+                display: inline;
+            }
+
+            #comments .media-detail a:hover {
+                text-decoration: underline;
+            }
+
+            #comments .media-detail li:last-child {
+                padding-right: 0;
+            }
+
+            #comments .media-detail li i {
+                color: #666666;
+                font-size: 15px;
+                margin-right: 10px;
+            }
+
+            #comments .media-detail.pull-right {
+                float: right;
+                margin-right: 10px;
+            }
+
+</style>

@@ -1,0 +1,140 @@
+﻿@model WebEazyCao.ViewModels.RegisterViewModel
+@using WebEazyCao.Models
+@using WebEazyCao
+@* @{
+    ViewData["Title"] = "Register";
+} *@
+
+<style>
+    .control-group {
+        padding: 0px 90px;
+    }
+
+    .send-email-button {
+        margin-top: -10px; /* Adjust the value as needed */
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is included -->
+<script>
+    function isValidEmail(email) {
+        // Biểu thức chính quy để kiểm tra định dạng email
+        var emailRegex = /^[a-z0-9._%+-]+@@[a-z0-9.-]+\.[a-z]{2,}$/;
+        return emailRegex.test(email);
+    }
+    function sendEmail() {
+        var email = $("#email").val().trim(); // Get the value from the email input field
+
+        if (!email) { // Check if the email field is empty
+            alert("Vui lòng nhập địa chỉ email trước khi gửi mã xác thực.");
+            return;
+        }
+
+        if (!isValidEmail(email)) { // Check if the email format is invalid
+            alert("Địa chỉ email không hợp lệ.");
+            return;
+        }
+
+        console.log("Sending email to: " + email); // Debug log to check the email value
+        $.ajax({
+            type: "POST", // or "GET" depending on your request type
+            url: "/Home/SendEmail", // Replace with your action path
+            data: { email: email },
+            success: function (result) {
+                // Handle the result from the action if necessary
+                console.log(result);
+                if (result.success) {
+                    alert(result.message); // Email sent successfully
+                } else {
+                    alert(result.message); // Email already registered
+                }
+            },
+            error: function (error) {
+                // Handle the error if any
+                console.log(error);
+                alert("Có lỗi xảy ra khi gửi email. Vui lòng thử lại sau.");
+            }
+        });
+    }
+</script>
+
+<div id="mainBody">
+    <div class="container">
+        <div class="row">
+            <div class="span9">
+                <ul class="breadcrumb">
+                    <li><a href="index">Trang chủ</a> <span class="divider">/</span></li>
+                    <li class="active">Đăng ký</li>
+                </ul>
+                <h3> Đăng ký </h3>
+                <div class="well">
+
+                    <form style="display: grid" method="post" asp-controller="Home" asp-action="Register">
+                        <h4 class="control-group">Thông tin cá nhân của bạn</h4>
+                        <h5 class="control-group" style="color: red;">@ViewBag.error</h5>
+                        <div class="control-group">
+                            <label class="control-label" for="UserName">Tên tài khoản <sup>*</sup></label>
+                            <input asp-for="Username" class="form-control" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="Password">Mật khẩu <sup>*</sup></label>
+                            <input type="password" asp-for="Password" class="form-control" value="@Model?.Password" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="ConfirmPassword">Xác nhận mật khẩu <sup>*</sup></label>
+                            <input type="password" asp-for="ConfirmPassword" class="form-control" value="@Model?.ConfirmPassword" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="Email">Email <sup>*</sup></label>
+                            <input asp-for="Email" class="form-control email" id="email"/>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <button class="btn btn-primary send-email-button" type="button" onclick="sendEmail()">Gửi Code</button>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="CodeValidate">Nhập Code<sup>*</sup></label>
+                            <input asp-for="CodeValidate" class="form-control" />
+                            <span asp-validation-for="CodeValidate" class="text-danger"></span>
+                            @ViewBag.errorcode
+                            @ViewBag.errorcode1
+                            @ViewBag.errorcode2
+                        </div>
+
+
+                        <div class="control-group">
+                            <label class="control-label" for="Name">Họ tên<sup>*</sup></label>
+                            <input asp-for="Name" type="text" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="Address">Địa chỉ</label>
+                            <input asp-for="Address" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                            <span>Hòa Lạc, Km29 Đại lộ Thăng Long, huyện Thạch Thất, Hà Nội</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="Phone">Số điện thoại </label>
+                            <input asp-for="Phone" class="form-control" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+                        <p class="control-group"><sup>*</sup>Phần bắt buộc</p>
+
+                        <div class="control-group">
+                            <div class="controls">
+                                <button type="submit" class="btn btn-success">Đăng kí</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MainBody End ============================= -->

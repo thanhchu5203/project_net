@@ -1,0 +1,134 @@
+﻿@model IEnumerable<WebEazyCao.Models.Footer>
+@{
+    ViewData["Title"] = "Footer";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section naviheader {
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a class="nav-link" data-widget="pushmenu" href="~/clients/index3.html">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a class="nav-link" href="/Admin/Footer">Footer</a>
+        </li>
+    </ul>
+}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>List Footer</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Footer</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Footer Items</h3>
+
+            <div class="card-tools">
+                <a href="/admin/footer/add" class="btn btn-primary">Thêm</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Description</th>
+                        <th>Link</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr id="trow_@item.Id">
+                                <td>@i</td>
+                                <td>@item.Name</td>
+                                <td>@item.Position</td>
+                                <td>@item.Description</td>
+                                <td><a href="@item.Links">Link</a></td>
+                                <td>
+                                    <a href="/Admin/Footer/Edit/@item.Id" class="btn btn-sm btn-primary">Sửa</a>
+                                    <a href="#" data-id="@item.Id" class="btn btn-sm btn-danger btnDelete">Xóa</a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">Empty</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+            Footer
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".btnDelete").on('click', function (e) {
+            e.preventDefault();
+            var id = $(this).data("id");
+
+            if (confirm("Bạn có chắc chắn muốn xóa mục này không?")) {
+                $.ajax({
+                    type: "POST",
+                    url: '/Admin/Footer/Delete',
+                    data: { id: id },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            $("#trow_" + id).remove();
+                            updateSTT(); // Gọi hàm updateSTT tại đây
+                        } else {
+                            alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+
+        function updateSTT() {
+            $("table tbody tr").each(function (index) {
+                $(this).find("td:first").text(index + 1);
+            });
+        }
+    });
+</script>

@@ -1,0 +1,22 @@
+﻿@model IEnumerable<WebEazyCao.Models.Category>
+
+@{
+    var currentCategoryId = ViewBag.CurrentCategoryId as int? ?? 1;
+}
+
+<ul id="sideManu" class="nav nav-tabs nav-stacked">
+    @foreach (var category in Model)
+    {
+        bool isOpen = category.Id == currentCategoryId;
+        <li class="subMenu @(isOpen ? "open" : "")">
+            <a>@category.Name</a>
+            <ul style="@(isOpen ? "" : "display:none")">
+                <li><a asp-controller="Product" asp-action="Category" asp-route-categoryId="@category.Id" asp-route-brandId="0"><i class="icon-chevron-right"></i>All</a></li>
+                @foreach (var brand in category.Brands.Where(b => b.IsDelete == false))
+                {
+                    <li><a asp-controller="Product" asp-action="Category" asp-route-categoryId="@category.Id" asp-route-brandId="@brand.Id"><i class="icon-chevron-right"></i>@brand.Name</a></li>
+                }
+            </ul>
+        </li>
+    }
+</ul>

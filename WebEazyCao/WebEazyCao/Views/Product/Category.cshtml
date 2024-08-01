@@ -1,0 +1,73 @@
+﻿@model IEnumerable<WebEazyCao.Models.Category>
+
+@{
+    ViewData["Title"] = "Category";
+}
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+
+<ul class="breadcrumb">
+	<li><a href="@Url.Action("Index", "Home")">Trang chủ</a> <span class="divider">/</span></li>
+	<li><a href="@Url.Action("Index", "Home")">Danh mục</a></li>
+</ul>
+
+<ul class="thumbnails">
+	@foreach (var item in ViewBag.Products)
+	{
+        <li class="span3">
+            <div class="thumbnail">
+                <a href="@Url.Action("ProductDetail","Product",new{ Id = item.Id })"><img src="@item.Image" alt="" /></a>
+                <div class="caption">
+                    <h5>@item.Name</h5>
+                    <h4 style="text-align:center">
+                        <button class="btn add-to-cart" data-id="@item.Id">Mua<i class="icon-shopping-cart"></i></button>
+                        <a class="btn btn-primary">@item.Price.ToString("0.000") VND</a>
+                    </h4>
+                </div>
+            </div>
+        </li>
+	}
+</ul>
+
+<div class="pagination">
+	@Html.PagedListPager((IPagedList)ViewBag.Products, page => Url.Action("category","product",
+	new{ page = page, id = ViewBag.Category.Id}))
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.add-to-cart').click(function () {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("Buy", "Cart")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (response) {
+                        if (response.success) {
+                            alert("Sản phẩm đã được thêm vào giỏ hàng!");
+                            $('#cart-quantity').text(response.quantity);
+                        } else {
+                            if (response.redirectUrl) {
+                                var confirmRedirect = confirm(response.message + "\n\nBạn có muốn đi tới trang nạp tiền không?");
+                                if (confirmRedirect) {
+                                    window.location.href = response.redirectUrl;
+                                }
+                            } else if (response.loginRequired) {
+                                alert(response.message);
+                                window.location.href = 'https://localhost:7032/Home/Login';
+                            } else {
+                                alert(response.message);
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra, vui lòng thử lại.");
+                    }
+                });
+            });
+        });
+    </script>
+}
+

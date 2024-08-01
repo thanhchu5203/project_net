@@ -1,0 +1,151 @@
+﻿@model WebEazyCao.Models.User
+@using WebEazyCao.Models
+@using WebEazyCao
+@using WebEazyCao.DAO
+@{
+    ViewData["Title"] = "Profile";
+    var username = ViewBag.Username as string;
+}
+
+@{
+    var User_id = ViewContext.HttpContext.Session.GetInt32("UserName");
+    User user = AccountDAO.GetAccountWithId(User_id);
+
+}
+<style>
+    .control-group {
+        padding: 0px 90px;
+    }
+
+    .profile-container {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 90px;
+    }
+
+    .profile-section {
+        width: 48%;
+    }
+
+    .divider {
+        border-left: 1px solid #ccc;
+        margin: 0 20px;
+    }
+
+    .btn-group {
+        display: flex;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is included -->
+<div id="mainBody">
+    <div class="container">
+        <div class="row">
+            <div class="span9">
+                <div>
+                    @if (TempData["Changeinfosuccess"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["Changeinfosuccess"]
+                        </div>
+                    }
+                </div>
+                <div>
+                    @if (TempData["Successchangepass"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["Successchangepass"]
+                        </div>
+                    }
+                </div>
+                <div>
+                    @if (TempData["ErrorCPNM"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["ErrorCPNM"]
+                        </div>
+                    }
+                </div>
+                <div>
+                    @if (TempData["ErrorCPW"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["ErrorCPW"]
+                        </div>
+                    }
+                </div>
+
+
+                <div class="profile-container">
+                    <div class="profile-section">
+                        <h3>Thông tin</h3>
+                        <form method="post" asp-controller="Account" asp-action="UpdateProfile">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label class="control-label">Họ Tên</label>
+                                <input asp-for="Name" class="form-control" readonly />
+
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Tài Khoản</label>
+                                <input asp-for="UserName" class="form-control" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Email</label>
+                                <input asp-for="Email" class="form-control" readonly />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Số Điện Thoại</label>
+                                <input asp-for="Phone" class="form-control" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Địa Chỉ</label>
+                                <input asp-for="Address" class="form-control" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                            </div>
+                        </form>
+                        <div class="form-group btn-group">
+                            <form method="get" asp-controller="Account" asp-action="TransactionHistory">
+                                <button type="submit" class="btn btn-secondary">Lịch sử giao dịch</button>
+                            </form>
+                            <form method="get" asp-controller="Account" asp-action="DepositHistory">
+                                <button type="submit" class="btn btn-secondary">Lịch sử nạp tiền</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="profile-section">
+                        <h3>Đổi mật khẩu</h3>
+                        <form method="post" asp-controller="Account" asp-action="ChangePassword">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label class="control-label">Tài Khoản</label>
+                                <input asp-for="UserName" class="form-control" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Mật Khẩu Cũ:</label>
+                                <input type="password" class="form-control" id="OldPassword" name="OldPassword" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Mật Khẩu Mới:</label>
+                                <input type="password" class="form-control" id="NewPassword" name="NewPassword" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Xác Nhận Mật Khẩu:</label>
+                                <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" required />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Thay Đổi Mật Khẩu</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

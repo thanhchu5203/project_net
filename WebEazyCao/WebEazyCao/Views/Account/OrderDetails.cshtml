@@ -1,0 +1,48 @@
+﻿@model WebEazyCao.Models.OrderHistory
+
+<h2>Chi tiết đơn hàng</h2>
+
+<div>
+    <h3>Thông tin đơn hàng</h3>
+    <p>Ngày giao dịch: @Model.Date?.ToString("dd/MM/yyyy HH:mm:ss")</p>
+    <p>Tổng số tiền: @Model.TotalPrice.ToString("0.000") VNĐ</p>
+</div>
+
+<div>
+    <h3>Chi tiết sản phẩm</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                @if (Model.OrderHistoryDetails.FirstOrDefault()?.CategoryId == 1)
+                {
+                    <th>Tên sản phẩm</th>
+                    <th>Serial</th>
+                    <th>Code</th>
+                    <th>Hành động</th>
+                }
+                else if (Model.OrderHistoryDetails.FirstOrDefault()?.CategoryId == 2)
+                {
+                    <th>Tên sản phẩm</th>
+                    <th>Tài khoản</th>
+                    <th>Mật khẩu</th>
+                    <th>Hành động</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var detail in Model.OrderHistoryDetails)
+            {
+                <tr>
+                    <td>@detail.ProductName</td>
+                    <td>@detail.Serial</td>
+                    <td>@detail.Code</td>
+                    <td>
+                        <a class="btn btn-danger btn-sm" href="@Url.Action("ReportError", "Account", new { id = detail.Id })">Báo cáo lỗi</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<a class="btn btn-secondary" href="@Url.Action("TransactionHistory", "Account")">Quay lại</a>

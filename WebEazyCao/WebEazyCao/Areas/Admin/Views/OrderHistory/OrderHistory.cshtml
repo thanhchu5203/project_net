@@ -1,0 +1,144 @@
+﻿@model IPagedList<WebEazyCao.Models.OrderHistory>
+
+@{
+    ViewData["Title"] = "Danh sách đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+@section naviheader {
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/Admin/OrderHistory" class="nav-link">Danh sách đơn hàng</a>
+        </li>
+    </ul>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Quản lí đơn hàng</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Order History</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Danh sách đơn hàng</h3>
+            <div class="card-tools d-flex justify-content-end">
+                <form method="get" action="/Admin/OrderHistory/Search" class="form-inline mr-2">
+                    <div class="input-group">
+                        <input type="text" name="key" class="form-control" placeholder="Tìm kiếm" value="@ViewBag.SearchKey">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                        </span>
+                    </div>
+                </form>
+                <a href="/Admin/OrderReport" class="btn btn-danger">Báo Cáo</a>
+            </div>
+        </div>
+
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Người mua</th>
+                        <th>Mã đơn hàng</th>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th>Chi tiết đơn hàng</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = 1;
+                        foreach (var order in Model)
+                        {
+                            <tr id="trow_@order.Id">
+                                <td>@i</td>
+                                <td>@order.User.UserName</td>
+                                <td>@order.Id</td>
+                                <td>@order.Date</td>
+                                <td>@(order.TotalPrice.ToString("N0")),000 VNĐ</td>
+                                
+                                <td>
+                                    <ul>
+                                        @foreach (var detail in order.OrderHistoryDetails)
+                                        {
+                                            <li>@detail.ProductName - @detail.Serial - @detail.Code</li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td>
+                                    <a href="/Admin/OrderHistoryDetail/@order.Id" class="btn btn-sm btn-primary">Xem chi tiết</a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-6">
+                        @* Custom Pagination *@
+                        <ul class="pagination">
+                            @if (ViewBag.PageNumber > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Search", "OrderHistory", new { key = ViewBag.SearchKey, page = ViewBag.PageNumber - 1 })">Previous</a>
+                                </li>
+                            }
+                            @for (var i = 1; i <= ViewBag.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == ViewBag.PageNumber ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Search", "OrderHistory", new { key = ViewBag.SearchKey, page = i })">@i</a>
+                                </li>
+                            }
+                            @if (ViewBag.PageNumber < ViewBag.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Search", "OrderHistory", new { key = ViewBag.SearchKey, page = ViewBag.PageNumber + 1 })">Next</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="col-6">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- /.card-body -->
+    <div class="card-footer">
+    </div>
+</section>
+<!-- /.content -->

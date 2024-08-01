@@ -1,0 +1,253 @@
+﻿@using WebEazyCao.DAO;
+@{
+    var userId = ViewContext.HttpContext.Session.GetInt32("User");
+    var username = ViewContext.HttpContext.Session.GetString("UserName");
+    var name = ViewContext.HttpContext.Session.GetString("Name");
+    var userRole = ViewContext.HttpContext.Session.GetString("Role");
+    string userMoneyString = ViewContext.HttpContext.Session.GetString("UserMoney");
+    decimal? userMoney = null;
+    if (!string.IsNullOrEmpty(userMoneyString))
+    {
+        if (decimal.TryParse(userMoneyString, out decimal result))
+        {
+            userMoney = result;
+        }
+    }
+    var footers = ViewBag.Footers as List<Footer>;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>EazyCào</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--Less styles -->
+    <!-- Other Less css file //different less files has different color scheam
+     <link rel="stylesheet/less" type="text/css" href="themes/less/simplex.less">
+     <link rel="stylesheet/less" type="text/css" href="themes/less/classified.less">
+     <link rel="stylesheet/less" type="text/css" href="themes/less/amelia.less">  MOVE DOWN TO activate
+     -->
+    <!--<link rel="stylesheet/less" type="text/css" href="themes/less/bootshop.less">
+    <script src="~/themes/js/less.js" type="text/javascript"></script> -->
+    <!-- Bootstrap style -->
+    <link id="callCss" rel="stylesheet" href="~/themes/bootshop/bootstrap.min.css" media="screen" />
+    <link href="~/themes/css/base.css" rel="stylesheet" media="screen" />
+    <!-- Bootstrap style responsive -->
+    <link href="~/themes/css/bootstrap-responsive.min.css" rel="stylesheet" />
+    <link href="~/themes/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <!-- Google-code-prettify -->
+    <link href="~/Content/~/themes/js/google-code-prettify/prettify.css" rel="stylesheet" />
+
+
+    <!-- fav and touch icons -->
+    <link rel="shortcut icon" href="~/themes/images/ico/EazyCaoLogo.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/themes/images/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="~/themes/images/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="~/themes/images/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="~/themes/images/ico/apple-touch-icon-57-precomposed.png">
+    <style type="text/css" id="enject"></style>
+    <style>
+
+        #mainBody {
+            padding: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <ul id="productList"></ul>
+    <div id="header">
+        <div class="container">
+            <div id="welcomeLine" class="row">
+                <div class="span6 welcome-text">
+                    @if (userId != null)
+                    {
+                        if (userRole == "Admin")
+                        {
+                            <div>
+                                Xin Chào! <strong><a href="/Account/Profile">@username</a></strong> |
+                                <a href="/Account/Profile">Thông Tin Cá Nhân</a> |
+                                <a href="/Admin/Home">Admin Home</a> |
+                                <a href="/Deposits/Recharge">Số dư tài khoản: @(userMoney?.ToString("N0")),000 VNĐ</a>
+                            </div>
+                        }else
+                        {
+                            <div>
+                                Xin Chào! <strong><a href="/Account/Profile">@username</a></strong> |
+                                <a href="/Account/Profile">Thông Tin Cá Nhân</a> |
+                                <a href="/Deposits/Recharge">Số dư tài khoản: @(userMoney?.ToString("N0")),000 VNĐ</a>
+                            </div>
+                        }
+                    }
+
+                </div>
+
+            </div>
+            <!-- Navbar ================================================== -->
+            <div id="logoArea" class="navbar">
+                <a id="smallScreen" data-target="#topMenu" data-toggle="collapse" class="btn btn-navbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <div class="navbar-inner">
+                    <a class="brand" href="/Home/Index"><img src="~/themes/images/logo.png" alt="EazyCao" /></a>
+                    
+                    @await Component.InvokeAsync("Search")
+
+                    <ul id="topMenu" class="nav pull-right">
+                        @if (ViewBag.Menu != null)
+                        {
+                            foreach (var item in (List<WebEazyCao.Models.Menu>)ViewBag.Menu)
+                            {
+                                <li><a href="@item.Links">@item.Title</a></li>
+                            }
+                        }
+
+
+                        @if (!string.IsNullOrEmpty(username))
+                        {
+
+                            <li class=""><a href="javascript:void(0);" onclick="document.getElementById('LogOffForm').submit()">Đăng xuất</a></li>
+                            <form id="LogOffForm" action="@Url.Action("LogOff", "Home")" method="post" style="display:none;">
+                                @Html.AntiForgeryToken()
+                            </form>
+
+
+
+                        }
+                        else
+                        {
+                            <li class=""><a href="@Url.Action("Login", "Home")">Đăng nhập</a></li>
+                        }
+
+
+
+
+                        <div id="login" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h3>Login Block</h3>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal loginFrm">
+                                    <div class="control-group">
+                                        <input type="text" id="inputEmail" placeholder="Email">
+                                    </div>
+                                    <div class="control-group">
+                                        <input type="password" id="inputPassword" placeholder="Password">
+                                    </div>
+                                    <div class="control-group">
+                                        <label class="checkbox">
+                                            <input type="checkbox"> Remember me
+                                        </label>
+                                    </div>
+                                </form>
+                                <button type="submit" class="btn btn-success">Sign in</button>
+                                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                            </div>
+                        </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End====================================================================== -->
+    <div id="carouselBlk">
+        <div id="myCarousel" class="carousel slide">
+            <div class="carousel-inner">
+                @if (ViewBag.Advs != null)
+                {
+                    int counter = 0;
+                    foreach (var adv in (List<WebEazyCao.Models.Adv>)ViewBag.Advs)
+                    {
+                        <div class="item @(counter == 0 ? "active" : "")">
+                            <div class="container">
+                                <a href="@adv.Link"><img width="90%" height="10%" src="@adv.Image" alt="special offers" /></a>
+                                <div class="carousel-caption">
+                                    <h4>@adv.Title</h4>
+                                </div>
+                            </div>
+                        </div>
+                        counter++;
+                    }
+                }
+            </div>
+            <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+            <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+        </div>
+    </div>
+    <div id="mainBody">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar ================================================== -->
+                @Html.Partial("_PartialSideBar")
+                <!-- Sidebar end=============================================== -->
+                <div class="span9">
+                    @RenderBody()
+                    @RenderSection("Scripts", required: false)
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Footer ================================================================== -->
+    <div id="footerSection">
+        <div class="container">
+            <div class="row">
+                @if (footers != null)
+                {
+                    foreach (var footer in footers)
+                    {
+                        <div class="span3">
+                            <h5>@footer.Name</h5>
+                            <p>@footer.Description</p>
+                            <a href="@footer.Links">Links</a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="span3">
+                        <h5>No Footer Items Available</h5>
+                    </div>
+                }
+            </div>
+            @*             <p class="pull-right">&copy; Bootshop</p> *@
+        </div><!-- Container End -->
+    </div>
+    <!-- Placed at the end of the document so the pages load faster ============================================= -->
+    <script src="~/themes/js/jquery.js" type="text/javascript"></script>
+    <script src="~/themes/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="~/themes/js/google-code-prettify/prettify.js"></script>
+    <script src="~/Content/~/themes/js/bootshop.js"></script>
+    <script src="~/themes/js/bootshop.js"></script>
+    <script src="~/themes/js/jquery.lightbox-0.5.js"></script>
+    <script>
+        async function searchProducts() {
+            const query = document.getElementById('searchQuery').value;
+            const response = await fetch(`https://localhost:5001/api/product/search?query=${query}`);
+            const products = await response.json();
+            displayProducts(products);
+        }
+
+        function displayProducts(products) {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = '';
+            products.forEach(product => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${product.name} - ${product.description} - $${product.price}`;
+                productList.appendChild(listItem);
+            });
+        }
+    </script>
+
+    <span id="themesBtn"></span>
+</body>
+</html>
+
